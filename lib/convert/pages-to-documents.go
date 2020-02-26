@@ -1,17 +1,10 @@
 package convert
 
 import (
-	"fmt"
 	"github.com/VEuPathDB/jekyll-site-search/lib/jekyll"
 	"github.com/VEuPathDB/jekyll-site-search/lib/solr"
 	"github.com/VEuPathDB/jekyll-site-search/lib/util"
 	"strings"
-	"time"
-)
-
-const (
-	batchType = "jekyll"
-	batchName = "all"
 )
 
 // These values must match the document type enum config at
@@ -23,10 +16,13 @@ var validTags = map[string]bool{
 	"workshop-exercise": true,
 }
 
-func PagesToDocs(pages *jekyll.Pages) solr.DocumentCollection {
+func PagesToDocs(
+	pages *jekyll.Pages,
+	batch *solr.Batch,
+) solr.DocumentCollection {
 	out := make([]solr.Document, 0, len(pages.Entries))
 	for i := range pages.Entries {
-		tmp, ok := pageToDoc(&(pages.Entries[i]))
+		tmp, ok := pageToDoc(&(pages.Entries[i]), batch)
 		if ok {
 			out = append(out, tmp)
 		}
@@ -34,7 +30,10 @@ func PagesToDocs(pages *jekyll.Pages) solr.DocumentCollection {
 	return out
 }
 
-func pageToDoc(entry *jekyll.PageEntry) (out solr.Document, ok bool) {
+func pageToDoc(
+	entry *jekyll.PageEntry,
+	batch *solr.Batch,
+) (out solr.Document, ok bool) {
 	tag, ok := tagsToDoctype(entry.Tags)
 
 	if !ok {
@@ -46,12 +45,10 @@ func pageToDoc(entry *jekyll.PageEntry) (out solr.Document, ok bool) {
 		return out, false
 	}
 
-	now := timeToMillis(time.Now())
-
-	out.BatchTime = now
-	out.BatchId = genBatchId(now)
-	out.BatchName = batchName
-	out.BatchType = batchType
+	out.BatchTime = batch.BatchTime
+	out.BatchId = batch.BatchId
+	out.BatchName = batch.BatchName
+	out.BatchType = batch.BatchType
 
 	out.Title = entry.Title
 	out.Url = strings.Split(util.Trim(entry.Url, '/'), "/")
@@ -68,12 +65,4 @@ func tagsToDoctype(tags []string) (string, bool) {
 		}
 	}
 	return "", false
-}
-
-func timeToMillis(now time.Time) int64 {
-	return now.UnixNano() / int64(time.Millisecond)
-}
-
-func genBatchId(millis int64) string {
-	return fmt.Sprintf("%s_%s_%d", batchType, batchName, millis)
 }

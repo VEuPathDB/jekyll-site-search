@@ -5,27 +5,20 @@ import "reflect"
 type DocumentCollection = []Document
 
 type Document struct {
-	Id        string   `solr:"id"`
+	Batch
 	Title     string   `solr:"hyperlinkName"`
 	Url       []string `solr:"primaryKey"`
 	Type      string   `solr:"document-type"`
 	Body      string   `solr:"body"`
-	BatchType string   `solr:"batch-type"`
-	BatchName string   `solr:"batch-name"`
-	BatchId   string   `solr:"batch-id"`
-	BatchTime int64    `solr:"batch-timestamp"`
 }
 
 func (d *Document) ToMap() map[string]interface{} {
-	v := reflect.ValueOf(d).Elem()
-	t := v.Type()
-	l := t.NumField()
+	l := getLn()
 	tags := make(map[string]string, l)
 	out := make(map[string]interface{}, l)
 
-	for i := 0; i < l; i++ {
-		tags[t.Field(i).Name] = getJsonKey(d, t.Field(i))
-	}
+	appendDocumentKeys(tags, d)
+	appendBatchKeys(tags)
 
 	if len(d.Title) > 0 {
 		out[tags["Title"]] = d.Title
@@ -48,7 +41,27 @@ const (
 	bodySuffixKey = "_content"
 )
 
-func getJsonKey(d *Document, f reflect.StructField) string {
+func appendDocumentKeys(o map[string]string, d *Document) {
+	tp := reflect.TypeOf(Document{})
+	ln := tp.NumField()
+	for i := 0; i < ln; i++ {
+		o[tp.Field(i).Name] = getDocJsonKey(d, tp.Field(i))
+	}
+}
+
+func appendBatchKeys(o map[string]string) {
+	tp := reflect.TypeOf(Batch{})
+	ln := tp.NumField()
+	for i := 0; i < ln; i++ {
+		o[tp.Field(i).Name] = tp.Field(i).Tag.Get("solr")
+	}
+}
+
+func getLn() int {
+	return reflect.TypeOf(Document{}).NumField() + reflect.TypeOf(Batch{}).NumField()
+}
+
+func getDocJsonKey(d *Document, f reflect.StructField) string {
 	if f.Name == "Body" {
 		return bodyPrefixKey + d.Type + bodySuffixKey
 	}

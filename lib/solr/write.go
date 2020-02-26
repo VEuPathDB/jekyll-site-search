@@ -5,24 +5,34 @@ import (
 	"io/ioutil"
 )
 
-const outputFile = "_site/api/v1/solr.json"
+const (
+	documentFile = "_site/api/v1/solr.json"
+	batchFile    = "_site/api/v1/batch.json"
+)
 
 func WriteDocumentJson(out DocumentCollection) {
-	data, err := json.Marshal(convert(out))
+	writeJson(documentFile, convertDoc(out))
+}
+
+func WriteBatchJson(batch *Batch) {
+	writeJson(batchFile, []*Batch{batch})
+}
+
+func writeJson(path string, out interface{}) {
+	data, err := json.Marshal(out)
 
 	if err != nil {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile(outputFile, data, 0640)
+	err = ioutil.WriteFile(path, data, 0640)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-
-func convert(in DocumentCollection) []map[string]interface{} {
+func convertDoc(in DocumentCollection) []map[string]interface{} {
 	out := make([]map[string]interface{}, len(in))
 
 	for i := range in {

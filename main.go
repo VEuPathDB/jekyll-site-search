@@ -7,5 +7,7 @@ import (
 )
 
 func main() {
-	solr.WriteDocumentJson(convert.PagesToDocs(jekyll.ReadPageJson()))
+	batch := solr.NewBatch()
+	solr.WriteDocumentJson(convert.PagesToDocs(jekyll.ReadPageJson(), batch))
+	solr.WriteBatchJson(batch)
 }
