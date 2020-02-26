@@ -19,6 +19,7 @@ const (
 var validTags = map[string]bool{
 	"general":           true,
 	"tutorial":          true,
+	"news":              true,
 	"workshop-exercise": true,
 }
 
