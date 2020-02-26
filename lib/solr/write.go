@@ -25,7 +25,7 @@ func writeJson(path string, out interface{}) {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile(path, data, 0640)
+	err = ioutil.WriteFile(path, data, 0644)
 
 	if err != nil {
 		panic(err)
