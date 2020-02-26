@@ -16,10 +16,10 @@ const (
 
 // These values must match the document type enum config at
 // https://github.com/VEuPathDB/SolrDeployment/blob/master/configsets/site-search/conf/enumsConfig.xml
-var validTags = map[string]string{
-	"general":           "General",
-	"tutorial":          "Tutorial",
-	"workshop-exercise": "Workshop exercise",
+var validTags = map[string]bool{
+	"general":           true,
+	"tutorial":          true,
+	"workshop-exercise": true,
 }
 
 func PagesToDocs(pages *jekyll.Pages) solr.DocumentCollection {
