@@ -2,33 +2,35 @@ package solr
 
 import (
 	"encoding/json"
+	"github.com/VEuPathDB/jekyll-site-search/lib/util"
 	"io/ioutil"
+	"os"
 )
 
 const (
-	documentFile = "_site/api/v1/solr.json"
-	batchFile    = "_site/api/v1/batch.json"
+	outPath      = "api/v1"
+	documentFile = outPath + "/solr.json"
+	batchFile    = outPath + "/batch.json"
 )
 
 func WriteDocumentJson(out DocumentCollection) {
+	ensurePath()
 	writeJson(documentFile, convertDoc(out))
 }
 
 func WriteBatchJson(batch *Batch) {
+	ensurePath()
 	writeJson(batchFile, []*Batch{batch})
 }
 
 func writeJson(path string, out interface{}) {
-	data, err := json.Marshal(out)
+	data := util.MustRead(json.Marshal(out))
+	util.Require(ioutil.WriteFile(path, data, 0644))
+}
 
-	if err != nil {
-		panic(err)
-	}
-
-	err = ioutil.WriteFile(path, data, 0644)
-
-	if err != nil {
-		panic(err)
+func ensurePath() {
+	if !dirExists(outPath) {
+		util.Require(os.MkdirAll(outPath, 0755))
 	}
 }
 
@@ -40,4 +42,18 @@ func convertDoc(in DocumentCollection) []map[string]interface{} {
 	}
 
 	return out
+}
+
+func dirExists(path string) bool {
+	out, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+		panic(err)
+	}
+	if !out.IsDir() {
+		panic(outPath + " exists and is not a directory")
+	}
+	return true
 }

@@ -11,11 +11,11 @@ const (
 )
 
 type Batch struct {
-	BatchType string `solr:"batch-type"`
-	BatchId   string `solr:"batch-id"`
-	BatchTime int64  `solr:"batch-timestamp"`
-	BatchName string `solr:"batch-name"`
-	Id        string `solr:"id"`
+	BatchType string `json:"batch-type"`
+	BatchId   string `json:"batch-id"`
+	BatchTime int64  `json:"batch-timestamp"`
+	BatchName string `json:"batch-name"`
+	Id        string `json:"id"`
 }
 
 func NewBatch() *Batch {

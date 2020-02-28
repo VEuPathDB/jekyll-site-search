@@ -1,24 +1,29 @@
 package jekyll
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"bufio"
+	"github.com/VEuPathDB/jekyll-site-search/lib/html"
+	"io"
+	"os"
 )
 
-const pageJsonPath = "_site/api/v1/pages.json"
+func ParseInput() []*Page {
+	reader := bufio.NewReader(os.Stdin)
+	scrub  := html.NewScrubber()
+	pages  := make([]*Page, 0, 1024)
+	for {
+		bytes, err := reader.ReadBytes('\n')
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			panic(err)
+		}
 
-func ReadPageJson() (out *Pages) {
-	file, err := ioutil.ReadFile(pageJsonPath)
-	if err != nil {
-		panic(err)
+		page := NewPage(bytes)
+		page.Content = scrub.Scrub(page.Content)
+		pages = append(pages, page)
 	}
 
-	out = new(Pages)
-
-	err = json.Unmarshal(file, out)
-	if err != nil {
-		panic(err)
-	}
-
-	return
+	return pages
 }

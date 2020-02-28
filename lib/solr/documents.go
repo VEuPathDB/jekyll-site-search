@@ -6,10 +6,10 @@ type DocumentCollection = []Document
 
 type Document struct {
 	Batch
-	Title     string   `solr:"hyperlinkName"`
-	Url       []string `solr:"primaryKey"`
-	Type      string   `solr:"document-type"`
-	Body      string   `solr:"body"`
+	Title     string   `json:"hyperlinkName,omitempty"`
+	Url       []string `json:"primaryKey"`
+	Type      string   `json:"document-type"`
+	Body      string   `json:"body"`
 }
 
 func (d *Document) ToMap() map[string]interface{} {
@@ -20,10 +20,7 @@ func (d *Document) ToMap() map[string]interface{} {
 	appendDocumentKeys(tags, d)
 	appendBatchKeys(tags)
 
-	if len(d.Title) > 0 {
-		out[tags["Title"]] = d.Title
-	}
-
+	out[tags["Title"]] = d.Title
 	out[tags["Url"]] = d.Url
 	out[tags["BatchType"]] = d.BatchType
 	out[tags["BatchName"]] = d.BatchName
@@ -53,7 +50,7 @@ func appendBatchKeys(o map[string]string) {
 	tp := reflect.TypeOf(Batch{})
 	ln := tp.NumField()
 	for i := 0; i < ln; i++ {
-		o[tp.Field(i).Name] = tp.Field(i).Tag.Get("solr")
+		o[tp.Field(i).Name] = tp.Field(i).Tag.Get("json")
 	}
 }
 
@@ -65,5 +62,5 @@ func getDocJsonKey(d *Document, f reflect.StructField) string {
 	if f.Name == "Body" {
 		return bodyPrefixKey + d.Type + bodySuffixKey
 	}
-	return f.Tag.Get("solr")
+	return f.Tag.Get("json")
 }
