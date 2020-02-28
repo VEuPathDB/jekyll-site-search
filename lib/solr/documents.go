@@ -6,7 +6,7 @@ type DocumentCollection = []Document
 
 type Document struct {
 	Batch
-	Title     string   `json:"hyperlinkName,omitempty"`
+	Title     string   `json:"hyperlinkName"`
 	Url       []string `json:"primaryKey"`
 	Type      string   `json:"document-type"`
 	Body      string   `json:"body"`
@@ -20,7 +20,9 @@ func (d *Document) ToMap() map[string]interface{} {
 	appendDocumentKeys(tags, d)
 	appendBatchKeys(tags)
 
-	out[tags["Title"]] = d.Title
+	if len(d.Title) > 0 {
+		out[tags["Title"]] = d.Title
+	}
 	out[tags["Url"]] = d.Url
 	out[tags["BatchType"]] = d.BatchType
 	out[tags["BatchName"]] = d.BatchName

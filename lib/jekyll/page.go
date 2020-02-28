@@ -3,6 +3,7 @@ package jekyll
 import (
 	"encoding/json"
 	"github.com/VEuPathDB/jekyll-site-search/lib/util"
+	"strings"
 )
 
 //==========================================================
@@ -58,8 +59,9 @@ func (p *Page) IsUsable() (string, bool) {
 	}
 
 	for i := range p.Tags {
-		if _, ok := validTags[p.Tags[i]]; ok {
-			return p.Tags[i], true
+		tmp := strings.ToLower(p.Tags[i])
+		if _, ok := validTags[tmp]; ok {
+			return tmp, true
 		}
 	}
 
