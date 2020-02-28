@@ -8,6 +8,7 @@ import (
 const (
 	batchType = "jekyll"
 	batchName = "all"
+	docType   = "batch-meta"
 )
 
 type Batch struct {
@@ -16,6 +17,7 @@ type Batch struct {
 	BatchTime int64  `json:"batch-timestamp"`
 	BatchName string `json:"batch-name"`
 	Id        string `json:"id"`
+	DocType   string `json:"document-type"`
 }
 
 func NewBatch() *Batch {
@@ -28,6 +30,7 @@ func NewBatch() *Batch {
 		BatchId:   id,
 		BatchTime: now,
 		Id:        id,
+		DocType:   docType,
 	}
 }
 
