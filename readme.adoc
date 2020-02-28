@@ -3,23 +3,7 @@
 A small script that generates json suitable for Solr from the Community
 Site/Static content Jekyll site.
 
-This tool is run by a post-build hook in Jekyll and expects to be run from the
-root directory of a Jekyll site built using the
-link:https://github.com/18F/jekyll_pages_api[jekyll_pages_api plugin].
-
-// TODO: primaryKey: split url into an array of strings
-// TODO: Patch the jekyll_pages_api project to insert spaces between html tags in the body
-// TODO: how does sitesearch-load-batch read files? does it expect a certain directory name
-// TODO: add an "id" key to the output json using a concatenation of the docuement type and the primary key
-// TODO: Create a batch json file
-
-//[
-//  {
-//    "batch-type": "compound",
-//    "batch-name": "VectorBase",
-//    "document-type": "batch-meta",
-//    "batch-timestamp": 1582733132,
-//    "batch-id": "compound_VectorBase_1582733132",
-//    "id": "compound_VectorBase_1582733132"
-//  }
-//]
+This tool is run by a build hook in Jekyll and expects to be run from the
+root directory of a Jekyll site.  It is piped Jekyll output pages directly and
+writes those pages to `solr.json` and `batch.json` in the built site's
+`_site/api/v1` directory.
