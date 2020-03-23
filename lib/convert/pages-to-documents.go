@@ -36,5 +36,6 @@ func pageToDoc(
 	out.Body = page.Content
 	out.Type = tag
 	out.Id = tag + ":" + strings.Join(out.Url, ":")
+	out.Project = out.Url[0]
 	return
 }
