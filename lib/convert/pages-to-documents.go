@@ -36,6 +36,13 @@ func pageToDoc(
 	out.Body = page.Content
 	out.Type = tag
 	out.Id = tag + ":" + strings.Join(out.Url, ":")
-	out.Project = out.Url[0]
+	out.Project = parseProject(out.Url[0])
 	return
+}
+
+func parseProject(url string) string {
+	if _, ok := projects[strings.ToLower(url)]; ok {
+		return url
+	}
+	return ""
 }

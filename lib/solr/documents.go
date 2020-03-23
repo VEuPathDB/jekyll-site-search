@@ -35,7 +35,9 @@ func (d *Document) ToMap() map[string]interface{} {
 	out[tags["Body"]] = d.Body
 	out[tags["Type"]] = d.Type
 	out[tags["Id"]] = d.Id
-	out[tags["Project"]] = d.Project
+	if len(d.Project) > 0 {
+		out[tags["Project"]] = d.Project
+	}
 
 	return out
 }
