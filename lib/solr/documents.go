@@ -6,7 +6,7 @@ type DocumentCollection = []Document
 
 type Document struct {
 	Batch
-	Title   string   `json:"hyperlinkName,omitempty"`
+	Title   string   `json:"hyperlinkName"`
 	Url     []string `json:"primaryKey"`
 	Type    string   `json:"document-type"`
 	Body    string   `json:"body"`
