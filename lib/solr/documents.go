@@ -6,12 +6,18 @@ type DocumentCollection = []Document
 
 type Document struct {
 	Batch
-	Title     string   `json:"hyperlinkName"`
-	Url       []string `json:"primaryKey"`
-	Type      string   `json:"document-type"`
-	Body      string   `json:"body"`
+	Title   string   `json:"hyperlinkName"`
+	Url     []string `json:"primaryKey"`
+	Type    string   `json:"document-type"`
+	Body    string   `json:"body"`
+	Project string   `json:"project"`
 }
 
+// ToMap creates a flattened map for Json marshalling with
+// the keys expected by Solr.
+//
+// Json marshal is not used directly due to the body field
+// which is dynamic based on the document type from Jekyll.
 func (d *Document) ToMap() map[string]interface{} {
 	l := getLn()
 	tags := make(map[string]string, l)
@@ -31,6 +37,9 @@ func (d *Document) ToMap() map[string]interface{} {
 	out[tags["Body"]] = d.Body
 	out[tags["Type"]] = d.Type
 	out[tags["Id"]] = d.Id
+	if len(d.Project) > 0 {
+		out[tags["Project"]] = d.Project
+	}
 
 	return out
 }
@@ -43,6 +52,7 @@ const (
 func appendDocumentKeys(o map[string]string, d *Document) {
 	tp := reflect.TypeOf(Document{})
 	ln := tp.NumField()
+
 	for i := 0; i < ln; i++ {
 		o[tp.Field(i).Name] = getDocJsonKey(d, tp.Field(i))
 	}
