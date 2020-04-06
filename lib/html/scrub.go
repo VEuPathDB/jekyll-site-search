@@ -9,6 +9,9 @@ import (
 )
 
 type Scrubber interface {
+
+	// Scrub strips HTML tags out of the input string, leaving
+	// just the text content behind.
 	Scrub(string) string
 }
 
