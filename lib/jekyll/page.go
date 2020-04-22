@@ -30,9 +30,10 @@ var validTags = map[string]bool{
 type Pages = []*Page
 
 type Header struct {
-	Title string  `json:"title,omitempty"`
-	Tags  []string `json:"tags"`
-	Link  string   `json:"permalink"`
+	Title      string   `json:"title,omitempty"`
+	Tags       []string `json:"tags"`
+	Categories []string `json:"categories"`
+	Link       string   `json:"permalink"`
 }
 
 type Page struct {

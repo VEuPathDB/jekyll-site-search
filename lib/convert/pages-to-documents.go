@@ -12,37 +12,69 @@ func PagesToDocs(
 ) solr.DocumentCollection {
 	out := make([]solr.Document, 0, len(pages))
 	for i := range pages {
-		tmp, ok := pageToDoc(pages[i], batch)
-		if ok {
-			out = append(out, tmp)
-		}
+		pageToDocs(pages[i], batch, &out)
 	}
 	return out
 }
 
-func pageToDoc(
+func pageToDocs(
 	page *jekyll.Page,
 	batch *solr.Batch,
-) (out solr.Document, ok bool) {
+	docs *[]solr.Document,
+) {
 	tag, ok := page.IsUsable()
 
-	out.BatchTime = batch.BatchTime
-	out.BatchId = batch.BatchId
-	out.BatchName = batch.BatchName
-	out.BatchType = batch.BatchType
+	if !ok {
+		return
+	}
+	
+	splitUrl := strings.Split(strings.Trim(page.Link, "/"), "/")
+	
+	for _, project := range parseProjects(splitUrl[0], page.Header.Categories) {
+		var id string
 
-	out.Title = page.Title
-	out.Url = strings.Split(strings.Trim(page.Link, "/"), "/")
-	out.Body = page.Content
-	out.Type = tag
-	out.Id = tag + ":" + strings.Join(out.Url, ":")
-	out.Project = parseProject(out.Url[0])
-	return
+		if project == "" {
+			id = tag + ":all:" + strings.Join(splitUrl, ":")
+		} else if project == splitUrl[0] {
+			id = tag + ":" + strings.Join(splitUrl, ":")
+		} else {
+			id = tag + ":" + project + ":" + strings.Join(splitUrl, ":")
+		}
+
+		*docs = append(*docs, solr.Document{
+			Batch:   solr.Batch{
+				BatchType: batch.BatchType,
+				BatchId:   batch.BatchId,
+				BatchTime: batch.BatchTime,
+				BatchName: batch.BatchName,
+				Id:        id,
+			},
+			Title:   page.Title,
+			Url:     splitUrl,
+			Type:    tag,
+			Body:    page.Content,
+			Project: project,
+		})
+	}
 }
 
-func parseProject(url string) string {
-	if _, ok := projects[strings.ToLower(url)]; ok {
-		return url
+func parseProjects(url string, cats []string) (out []string) {
+	// Prioritize categories
+	for _, cat := range cats {
+		if _, ok := projects[strings.ToLower(cat)]; ok {
+			out = append(out, cat)
+		}
 	}
-	return ""
+	
+	if len(out) > 0 {
+		return
+	}
+	
+	if _, ok := projects[strings.ToLower(url)]; ok {
+		out = append(out, url)
+		return
+	}
+
+	out = append(out, "")
+	return
 }
