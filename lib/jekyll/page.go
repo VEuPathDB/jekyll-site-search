@@ -62,6 +62,9 @@ func (p *Page) IsUsable() (string, bool) {
 	for i := range p.Tags {
 		tmp := strings.ToLower(p.Tags[i])
 		if _, ok := validTags[tmp]; ok {
+			if p.Content == "-" {
+				p.Content = ""
+			}
 			return tmp, true
 		}
 	}
