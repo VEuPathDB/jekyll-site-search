@@ -32,6 +32,7 @@ func pageToDocs(
 	
 	for _, project := range parseProjects(splitUrl[0], page.Header.Categories) {
 		var id string
+		var url []string
 
 		if project == "" {
 			id = tag + ":all:" + strings.Join(splitUrl, ":")
@@ -39,6 +40,12 @@ func pageToDocs(
 			id = tag + ":" + strings.Join(splitUrl, ":")
 		} else {
 			id = tag + ":" + project + ":" + strings.Join(splitUrl, ":")
+		}
+
+		if page.PrependContent {
+			url = append([]string{"content"}, splitUrl...)
+		} else {
+			url = splitUrl
 		}
 
 		*docs = append(*docs, solr.Document{
@@ -50,7 +57,7 @@ func pageToDocs(
 				Id:        id,
 			},
 			Title:   page.Title,
-			Url:     splitUrl,
+			Url:     url,
 			Type:    tag,
 			Body:    page.Content,
 			Project: project,

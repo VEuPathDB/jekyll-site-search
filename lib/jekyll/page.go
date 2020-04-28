@@ -3,6 +3,7 @@ package jekyll
 import (
 	"encoding/json"
 	"github.com/VEuPathDB/jekyll-site-search/lib/util"
+	"path"
 	"strings"
 )
 
@@ -39,6 +40,9 @@ type Header struct {
 type Page struct {
 	Header `json:"header"`
 
+	Path string `json:"path"`
+	PrependContent bool
+
 	Content string `json:"output"`
 }
 
@@ -55,6 +59,11 @@ func NewPage(b []byte) *Page {
 }
 
 func (p *Page) IsUsable() (string, bool) {
+	if strings.HasPrefix(p.Link, ":path") {
+		p.PrependContent = true
+		p.Link = strings.Replace(p.Link, ":path", path.Base(path.Dir(p.Path)), 1)
+	}
+
 	if len(p.Content) == 0 || len(p.Link) == 0 {
 		return "", false
 	}
