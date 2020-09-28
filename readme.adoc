@@ -1,7 +1,11 @@
 = Jekyll Site Search Data Generator
 
+##Description
+
 A small script that generates json suitable for Solr from the Community
 Site/Static content Jekyll site.
+
+##Installation and usage
 
 This tool is run by a build hook in Jekyll and expects to be run from the
 root directory of a Jekyll site.  It is piped Jekyll output pages directly and
