@@ -10,6 +10,7 @@ const (
 	outPath      = "./api/v1"
 	documentFile = outPath + "/solr.json"
 	batchFile    = outPath + "/batch.json"
+	doneFile     = outPath + "/DONE"
 )
 
 func WriteDocumentJson(out DocumentCollection) {
@@ -22,8 +23,16 @@ func WriteBatchJson(batch *Batch) {
 	writeJson(batchFile, []*Batch{batch})
 }
 
+func WriteDoneFile() {
+	file, err := os.OpenFile(doneFile, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0644)
+	if err != nil {
+		panic(err)
+	}
+	util.Require(file.Close())
+}
+
 func writeJson(path string, out interface{}) {
-	file, err := os.OpenFile(path, os.O_CREATE | os.O_TRUNC | os.O_RDWR, 0644)
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_RDWR, 0644)
 	if err != nil {
 		panic(err)
 	}

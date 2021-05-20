@@ -10,4 +10,5 @@ func main() {
 	batch := solr.NewBatch()
 	solr.WriteDocumentJson(convert.PagesToDocs(jekyll.ParseInput(), batch))
 	solr.WriteBatchJson(batch)
+	solr.WriteDoneFile()
 }
