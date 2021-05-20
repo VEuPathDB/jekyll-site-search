@@ -1,9 +1,10 @@
 package convert
 
 import (
+	"strings"
+
 	"github.com/VEuPathDB/jekyll-site-search/lib/jekyll"
 	"github.com/VEuPathDB/jekyll-site-search/lib/solr"
-	"strings"
 )
 
 func PagesToDocs(
@@ -36,11 +37,17 @@ func pageToDoc(
 	out.Body = page.Content
 	out.Type = tag
 	out.Id = tag + ":" + strings.Join(out.Url, ":")
-	out.Project = parseProject(out.Url[0])
+	out.Project = parseProject(page.Categories, out.Url[0])
 	return
 }
 
-func parseProject(url string) string {
+func parseProject(categories []string, url string) string {
+	for _, cat := range categories {
+		if _, ok := projects[strings.ToLower(url)]; ok {
+			return cat
+		}
+	}
+
 	if _, ok := projects[strings.ToLower(url)]; ok {
 		return url
 	}
