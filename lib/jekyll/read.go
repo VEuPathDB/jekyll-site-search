@@ -21,7 +21,11 @@ func ParseInput() []*Page {
 		}
 
 		page := NewPage(bytes)
+		preLn := len(page.Content)
 		page.Content = scrub.Scrub(page.Content)
+		if preLn > 0 && len(page.Content) == 0 {
+			page.Content = "-"
+		}
 		pages = append(pages, page)
 	}
 

@@ -3,12 +3,11 @@ package solr
 import (
 	"encoding/json"
 	"github.com/VEuPathDB/jekyll-site-search/lib/util"
-	"io/ioutil"
 	"os"
 )
 
 const (
-	outPath      = "api/v1"
+	outPath      = "./api/v1"
 	documentFile = outPath + "/solr.json"
 	batchFile    = outPath + "/batch.json"
 )
@@ -24,8 +23,14 @@ func WriteBatchJson(batch *Batch) {
 }
 
 func writeJson(path string, out interface{}) {
-	data := util.MustRead(json.Marshal(out))
-	util.Require(ioutil.WriteFile(path, data, 0644))
+	file, err := os.OpenFile(path, os.O_CREATE | os.O_TRUNC | os.O_RDWR, 0644)
+	if err != nil {
+		panic(err)
+	}
+	enc := json.NewEncoder(file)
+	enc.SetIndent("", "  ")
+	util.Require(enc.Encode(out))
+	util.Require(file.Close())
 }
 
 func ensurePath() {

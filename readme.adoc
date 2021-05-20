@@ -1,9 +1,17 @@
 = Jekyll Site Search Data Generator
 
+## Description
+
 A small script that generates json suitable for Solr from the Community
 Site/Static content Jekyll site.
 
-This tool is run by a build hook in Jekyll and expects to be run from the
-root directory of a Jekyll site.  It is piped Jekyll output pages directly and
+## Installation
+
+This tool is piped Jekyll output pages directly and
 writes those pages to `solr.json` and `batch.json` in the built site's
 `_site/api/v1` directory.
+
+## Usage
+
+This tool is run by a build hook in Jekyll and expects to be run from the
+root directory of a Jekyll site.
