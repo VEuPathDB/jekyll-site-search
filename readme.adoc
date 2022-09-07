@@ -1,17 +1,39 @@
 = Jekyll Site Search Data Generator
 
-## Description
+== Description
 
 A small script that generates json suitable for Solr from the Community
 Site/Static content Jekyll site.
 
-## Installation
+== Purpose
 
 This tool is piped Jekyll output pages directly and
 writes those pages to `solr.json` and `batch.json` in the built site's
 `_site/api/v1` directory.
 
-## Usage
+== Usage
 
 This tool is run by a build hook in Jekyll and expects to be run from the
 root directory of a Jekyll site.
+
+== Build
+
+This project produces 3 executable binaries, `post-process-linux`,
+`post-process-darwin`, and `post-process.exe`.  These can be built by calling
+`make`.  The default `make` target will create the binaries.
+
+
+== Deploy
+
+To "deploy" new versions of these binaries, the 3 generated binaries are to be
+copied into the
+link:https://github.com/VEuPathDB/StaticContent/tree/master/_scripts[StaticContent `_scripts` directory]
+then committed to Git.
+
+
+== Testing
+
+There are no automated tests on this repo.  To test the generated binaries,
+follow the <<Deploy>> steps apart from committing the new binaries, then run the
+Jekyll build locally.  The generated `solr.json` and `batch.json` files will
+have to be manually checked for correctness.
